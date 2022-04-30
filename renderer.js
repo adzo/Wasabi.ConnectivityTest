@@ -5,183 +5,223 @@
 // selectively enable features needed in the rendering
 // process.
 
-headers = "BucketOwner,Bucket,Time,RemoteIP,Requester,RequestId,Operation,Key,Request-URI,HttpStatus,ErrorCode,BytesSent,ObjectSize,TotalTime,Turn-AroundTime,Referrer,User-Agent,VersionId".split(',');
-objects = [{}]
-var select_file_btn = document.querySelector("#select_file_btn");
-var log_file_input = document.querySelector("#log_file_input");
-var result_table = document.querySelector("#result_table");
-var file_name = document.querySelector("#file_name")
-var bucket_name = document.querySelector("#bucket-name")
 
-select_file_btn.addEventListener("click", () => {
-    log_file_input.click();
-});
+const loader_text = document.querySelector('#loader-text');
+const loader_content = document.querySelector('#loader');
+const error_text = document.querySelector('#error-text');
+const loader_spinner = document.querySelector('#loader-spinner');
+const reload_btn = document.querySelector('#reload-btn');
+const main_content = document.querySelector('#main-content');
+const us_regions_container = document.querySelector('#us_regions_container');
+const eu_regions_container = document.querySelector('#eu_regions_container');
+const apac_regions_container = document.querySelector('#apac_regions_container');
+const wasabi_tools_container = document.querySelector('#wasabi_tools_container');
 
-log_file_input.addEventListener("change", function () {
-    if (this.files.length > 0 && this.files[0]) {
-        var fr = new FileReader();
-        fr.onload = function () {
-            process_log(fr.result)
-        };
+const us_regions_prefix = ['us', 'ca'];
+const eu_regions_prefix = ['eu', 'eu'];
+const apac_regions_prefix = ['ap'];
 
-        file_name.textContent = '| ' + this.files[0].name;
-        fr.readAsText(this.files[0]);
+// UI Event creation
+reload_btn.addEventListener('click', () => {
+    loadAvailableRegions();
+})
+
+// 
+//region Events Handling
+window.api.receive("pingMeasured", (data) => {
+    //TODO
+    //console.log("Ping measure")
+    //console.log(data);
+    if (data.resolved && data.ping.stdout) {
+        ping = parsePingResponse(data.ping);
+        setAvailablilityBadge(data.region, true, ping)
     } else {
-        file_name.textContent = "| No file selected!"
+        setAvailablilityBadge(data.region, false, 'N/A')
     }
 
-});
+})
 
-function process_log(input) {
-    var lines = input.split('\n')
-    objects = convertRawtextToCsv(lines);
+window.api.receive("getRegionCert", (data) => {
+    region = data.region;
+    certificate = data.cert;
+    setIssuer(region, certificate.issuer.CN);
+    validFrom = new Date(certificate.valid_from);
+    validTo = new Date(certificate.valid_to);
+    setValidFrom(region, `${validFrom.getFullYear()}/${validFrom.getMonth() + 1}/${validFrom.getDate()}`);
+    setValidTo(region, `${validTo.getFullYear()}/${validTo.getMonth() + 1}/${validTo.getDate()}`);
 
-    let bucket = '';
-    objects.forEach(element => {
-        if (bucket != element.Bucket) {
-            bucket = element.Bucket;
+    if (validTo > new Date()) {
+        setCertificateValidation(region, true);
+    } else {
+        setCertificateValidation(region, false);
+    }
+})
+//endregion
+
+//Events Raising
+function notifyMainProcess() {
+    // loadedRegions.push({
+    //     Region: 'ap-BAD-1',
+    //     RegionName: 'expired.badssl',
+    //     Endpoint: 'expired.badssl.com',
+    //     Status: 'OK',
+    //     IsDefault: true
+    // });
+    // loadedRegions.push({
+    //     Region: 'ap-BAD-2',
+    //     RegionName: 'pinning-test',
+    //     Endpoint: 'pinning-test.badssl.com',
+    //     Status: 'OK',
+    //     IsDefault: true
+    // });
+
+    window.api.send("onRegionsLoaded", loadedRegions)
+}
+
+
+// utilities 
+function pingURL() {
+    var URL = $("#url").val();
+    window.api.send("toMain", URL);
+}
+
+let loadedRegions = [];
+
+
+
+
+function setupUi() {
+    //setting up UI here
+
+    main_content.classList.remove("hidden");
+    loader_content.classList.add("hidden");
+
+    loadedRegions.forEach(element => {
+        addRegionToCorrespondingUiBlock(element);
+        window.api.send("getRegionCert", element.Region)
+    })
+}
+
+function addWasabiToolsEndpoints() {
+    //add console
+    loadedRegions.push({
+        Region: 'console',
+        RegionName: 'Web Console',
+        Endpoint: 'console.wasabisys.com',
+        Status: 'OK',
+        IsDefault: false
+    });
+    //add IAM endpoint
+    loadedRegions.push({
+        Region: 'iam',
+        RegionName: 'IAM (Identity Access Man...)',
+        Endpoint: 'iam.wasabisys.com',
+        Status: 'OK',
+        IsDefault: false
+    });
+    // add sts endpoint
+    loadedRegions.push({
+        Region: 'sts',
+        RegionName: 'STS (Security Token Service)',
+        Endpoint: 'sts.wasabisys.com',
+        Status: 'OK',
+        IsDefault: false
+    });
+}
+
+function loadAvailableRegions() {
+    clearUi();
+    url = 'https://s3.wasabisys.com/?describeRegions';
+
+    reload_btn.classList.add('hidden');
+    error_text.textContent = '';
+    loader_spinner.classList.add("spinner-grow")
+
+    $.ajax({
+        type: "GET",
+        dataType: 'xml',
+        url: url,
+        success: function (respData) {
+            regions = []
+            $(respData).find("item").each(function () {
+                let item = this;
+                let region = {
+                    Region: $(item).find('Region').text(),
+                    RegionName: $(item).find('RegionName').text(),
+                    Endpoint: $(item).find('Endpoint').text(),
+                    Status: $(item).find('Status').text(),
+                    IsDefault: $(item).find('IsDefault').text()
+                };
+
+                regions.push(region);
+            });
+
+            if (regions && regions.length > 0) {
+                loader_text.textContent = `Loaded ${regions.length} regions`;
+            } else {
+                loader_text.textContent = `No region was loaded`;
+                return;
+            }
+
+            loadedRegions = regions;
+            addWasabiToolsEndpoints();
+
+            notifyMainProcess();
+            setupUi();
+        },
+        error: function (request, status, error) {
+            loader_text.textContent = `Counld not load any region`;
+            error_text.textContent = status;
+            loader_spinner.classList.remove("spinner-grow");
+            reload_btn.classList.remove('hidden');
         }
     });
-    bucket_name.textContent = bucket;
+}
 
-    if ($.fn.dataTable.isDataTable('#result_table')) {
-        $('#result_table').DataTable().destroy();
+
+
+loadAvailableRegions()
+
+const drawer = document.querySelector('.Drawer');
+const btn_us_region_collapse = document.querySelector('#btn_us_region_collapse');
+us_region_is_open = false;
+
+function toggleUsRegion() {
+    if (us_region_is_open) {
+        hide();
+    } else {
+        show();
     }
-
-    $('#result_table').DataTable({
-        data: objects,
-        columns: [
-            {
-                title: 'Request Id',
-                data: 'RequestId',
-                className: "px-6 py-1 text-sm text-center text-gray-500 hover:bg-gray-100",
-                render: function (data, type, row) {
-
-                    return ' <span class="bg-gray-100 text-gray-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">' + data + '</span> '
-                }
-            },
-            { title: 'Time (UTC)', data: 'Time', className: "px-6 py-2 text-sm text-center text-gray-500", width: "200px" },
-            {
-                title: 'IP',
-                data: 'RemoteIP',
-                className: "px-6 py-2 text-sm text-center text-gray-500",
-                render: function (data, type, row) {
-                    return '<span class="bg-gray-100 text-gray-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">' + data + '</span>'
-                }
-            },
-
-
-            { title: 'Operation', data: 'Operation', className: "px-6 py-2 text-sm text-center text-gray-500" },
-            { title: 'Request-URI', data: 'Request-URI', className: "px-6 py-2 text-sm text-center text-gray-500" },
-            {
-                title: 'Http Status',
-                data: 'HttpStatus',
-                className: "px-6 py-2 text-sm text-center text-gray-500",
-                render: function (data, type, row) {
-                    if (data.startsWith('2')) {
-                        return '<span class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-900">' + data + '</span>'
-                    }
-                    else if (data.startsWith('3')) {
-                        return '<span class="bg-gray-100 text-gray-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300"">' + data + '</span>'
-                    } else if (data.startsWith('4')) {
-                        return '<span class="bg-yellow-100 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-200 dark:text-yellow-900">' + data + '</span>'
-                    } else {
-                        return '<span class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900">' + data + '</span>';
-                    }
-                }
-            },
-            {
-                title: 'Error',
-                data: 'ErrorCode',
-                className: "px-6 py-2 text-sm text-center text-gray-500"
-            },
-            { title: 'Bytes Sent', data: 'BytesSent', className: "px-6 py-2 text-sm text-center text-gray-500" },
-            { title: 'Size (bytes)', data: 'ObjectSize', className: "px-6 py-2 text-sm text-center text-gray-500" },
-            { title: 'Total Time (ms)', data: 'TotalTime', className: "px-6 py-2 text-sm text-center text-gray-500", width: "75px" },
-            { title: 'Turnaround (ms)', data: 'Turn-AroundTime', className: "px-6 py-2 text-sm text-center text-gray-500" },
-            { title: 'Referrer', data: 'Referrer', className: "px-6 py-2 text-sm text-center text-gray-500" },
-            { title: 'Key', data: 'Key', className: "px-6 py-2 text-sm text-center text-gray-500" },
-            { title: 'Version Id', data: 'VersionId', className: "px-6 py-2 text-sm text-center text-gray-500", width: "250px" },
-            { title: 'Requester', data: 'Requester', className: "px-6 py-2 text-sm text-center text-gray-500", width: "50px" },
-            //{ title: 'Bucket', data: 'Bucket', className: "px-6 py-2 text-sm text-center text-gray-500", width: "150px" }
-        ],
-        "scrollX": true,
-        "scrollY": 650
-    });
 }
 
-function copyRequestId(requestId) {
-    console.log(requestId);
+function show() {
+    drawer.classList.remove('hidden');
+
+    /**
+    * Force a browser re-paint so the browser will realize the
+    * element is no longer `hidden` and allow transitions.
+    */
+    const reflow = drawer.offsetHeight;
+
+    // Trigger our CSS transition
+    drawer.classList.add('is-open');
+    us_region_is_open = true;
+    btn_us_region_collapse.classList.add('rotate-180')
 }
 
-function convertRawtextToCsv(lines) {
-    //result = "BucketOwner,Bucket,Time,RemoteIP,Requester,RequestId,Operation,Key,Request-URI,HttpStatus,ErrorCode,BytesSent,ObjectSize,TotalTime,Turn-AroundTime,Referrer,User-Agent,VersionId\n";
-    objects = [];
-    for (var i = 0, len = lines.length; i < len - 1; i++) {
-        // here words[i] is the array element
-        if (i > 1) {
-            // result += formatLineToCsv(lines[i]) 
-            objects.push(formatLineToCsv(lines[i]))
-        }
-    }
-    return objects;
+const listener = () => {
+    // drawer.setAttribute('hidden', true);
+    drawer.classList.add('hidden');
+    // drawer.classList.add('is-open');
+
+    drawer.removeEventListener('transitionend', listener);
+};
+
+function hide() {
+    drawer.addEventListener('transitionend', listener);
+
+    drawer.classList.remove('is-open');
+
+    us_region_is_open = false;
+    btn_us_region_collapse.classList.remove('rotate-180')
 }
-
-function formatLineToCsv(line) {
-    let obj = {};
-    let result = ''
-    let j = 0;
-    let inside_quote = false
-    const delimiters = ['"', '[', ']']
-    for (var i = 0; i <= line.length; i++) {
-        if (i == line.length && result != '') {
-            obj[headers[j]] = result;
-        }
-        else {
-            character = line.charAt(i);
-            if (!delimiters.includes(character) && character != ' ') {
-                result += character
-            }
-            else {
-                if (delimiters.includes(character)) {
-                    inside_quote = !inside_quote;
-                    // if (character == '"') {
-                    //     result += character
-                    // }
-                }
-                else if (character == ' ') {
-                    if (inside_quote) {
-                        result += ' '
-                    } else {
-                        //result += ','
-                        obj[headers[j]] = result;
-                        j++;
-                        result = "";
-                    }
-                }
-            }
-        }
-
-    }
-
-    obj['Time'] = buildDate(obj['Time']).toISOString("YYYY-MM-dd-hh-mm-ss")
-    return obj
-}
-
-function buildDate(input) {
-    var months = {
-        jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
-        jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11
-    };
-
-    let day = input.substring(0, 2)
-    let month = input.substring(3, 6)
-    let year = input.substring(7, 11)
-    let hour = input.substring(12, 14)
-    let minute = input.substring(15, 17)
-    let seconds = input.substring(18, 20)
-
-    let result = new Date(Date.UTC(year, months[month.toLowerCase()], day, hour, minute, seconds));
-    return result;
-}
-

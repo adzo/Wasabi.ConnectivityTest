@@ -24,6 +24,9 @@
     "electron-packager": "^15.5.1"
   },
   "dependencies": {
-    "convert-csv-to-json": "^1.3.3"
+    "convert-csv-to-json": "^1.3.3",
+    "get-ssl-certificate": "^2.3.3",
+    "mtr": "^0.2.1",
+    "ping": "^0.4.2"
   }
 }

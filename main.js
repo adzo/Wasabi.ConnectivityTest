@@ -1,17 +1,24 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron')
-const path = require('path')
+const { app, BrowserWindow, ipcMain } = require('electron');
+const path = require('path');
+const sslCertificate = require('get-ssl-certificate');
+const util = require('util')
+const exec = util.promisify(require('child_process').exec);
 
+let mainWindow;
 function createWindow() {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1024,
     height: 900,
+    minWidth: 500,
     webPreferences: {
+      nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js')
     },
-    autoHideMenuBar: true,
-    icon: __dirname + '/icons/wasabi.png',
+    // autoHideMenuBar: true,
+    icon: __dirname + '/assets/icons/wasabi.png',
+
   })
 
 
@@ -44,3 +51,73 @@ app.on('window-all-closed', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+
+let currentRegions = [];
+
+function buildRegionsLoadedEventHandler() {
+  ipcMain.on("onRegionsLoaded", (event, args) => {
+    currentRegions = args;
+  })
+}
+
+function buildGetRegionCertificateEventHandler() {
+  ipcMain.on("getRegionCert", (event, args) => {
+    let regionCode = args;
+
+    selectedRegion = currentRegions.find(region => region.Region == regionCode)
+
+    // lunching ping call
+    pingRegion(selectedRegion.Endpoint).then(result => {
+      //console.log(result);
+      if (result) {
+        mainWindow.webContents.send("pingMeasured", {
+          region: regionCode,
+          resolved: true,
+          ping: result
+        });
+      } else {
+        mainWindow.webContents.send("pingMeasured", {
+          region: regionCode,
+          resolved: false,
+          ping: result
+        });
+      }
+
+    })
+
+    // getting certificate
+    sslCertificate.get(selectedRegion.Endpoint).then(function (certificate) {
+      mainWindow.webContents.send("getRegionCert", {
+        region: regionCode,
+        cert: certificate
+      });
+    });
+  })
+}
+
+
+
+async function pingRegion(url) {
+
+  // let result = await pingDefault(url);
+  return exec(`ping ${url}`).then(result =>
+    result)
+    .catch(err => {
+      console.log(err)
+      return false;
+    })
+
+  // let result = await exec(`ping ${url}`);
+  // return result;
+}
+
+async function buildEventsHandlers() {
+  buildRegionsLoadedEventHandler();
+  buildGetRegionCertificateEventHandler();
+}
+
+buildEventsHandlers();
+
+
+

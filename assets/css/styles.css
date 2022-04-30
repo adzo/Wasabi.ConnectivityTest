@@ -1,0 +1,8 @@
+.Drawer {
+    transform: translateY(-100%);
+    transition: transform ease-out 0.3s;
+  }
+  
+  .Drawer.is-open {
+    transform: translateX(0);
+  }
