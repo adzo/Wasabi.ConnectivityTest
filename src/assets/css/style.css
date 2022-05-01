@@ -1,0 +1,12 @@
+.Drawer {
+    transform: translateY(-100%);
+    transition: transform ease-out 0.2s;
+  }
+  
+  .Drawer.is-open {
+    transform: translateX(0);
+  }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

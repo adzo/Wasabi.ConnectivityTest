@@ -1,0 +1,249 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wasabi - Connectivity Test</title>
+    <link rel="stylesheet" href="./assets/css/style.css" />
+    <link href="../dist/style.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/css/flag-icon.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-gray-300 p-4">
+    <div id="loader">
+      <div class="h-full flex flex-col justify-center items-center">
+        <div class="flex justify-center items-center">
+          <div
+            class="spinner-grow inline-block w-8 h-8 mb-4 bg-current rounded-full opacity-0"
+            role="status"
+            id="loader-spinner"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <h3 id="loader-text">Loading available regions...</h3>
+          <h2 id="error-text" class="text-red-300"></h2>
+
+          <button
+            id="reload-btn"
+            type="button"
+            class="mt-4 inline-block px-6 py-2 border-2 border-gray-800 text-gray-800 font-medium text-xs leading-tight uppercase rounded-full hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+          >
+            Reload
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-2 hidden" id="main-content">
+      <!-- US regions -->
+      <div
+        class="p-2 bg-white shadow-lg rounded-lg hover:shadow-2xl transition-shadow ease-in-out"
+      >
+        <div
+          class="flex items-center justify-between border-b border-gray-300 pt-0 pb-2"
+        >
+          <div class="px-6 pl-3 flex items-center">
+            <img src="assets/icons/usa.png" class="w-6 mr-2" alt="" />
+            <span>US Regions</span>
+          </div>
+          <button
+            onclick="toggleContainer('us_regions_container')"
+            type="button"
+            id="btn_us_regions_container"
+            class="inline-block rotate-180 px-2 py-2 text-gray-400 font-medium text-xs leading-tight uppercase rounded-full hover:bg-gray-600 hover:bg-opacity-10 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+          >
+            <svg
+              version="1.1"
+              id="Capa_1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              class="w-4 h-4"
+              viewBox="0 0 25.93 25.93"
+              xml:space="preserve"
+            >
+              <g>
+                <g id="c118_triangle">
+                  <path
+                    d="M25.397,4.554h-2.042l-9.974,12.644c-0.101,0.124-0.256,0.197-0.416,0.197c-0.164,0-0.315-0.073-0.419-0.197L2.575,4.554
+			H0.532c-0.206,0-0.392,0.115-0.479,0.299c-0.09,0.184-0.064,0.403,0.06,0.561l12.435,15.762c0.104,0.125,0.255,0.2,0.419,0.2
+			c0.16,0,0.315-0.075,0.416-0.2L25.816,5.413c0.128-0.157,0.148-0.377,0.058-0.561C25.789,4.669,25.601,4.554,25.397,4.554z"
+                  />
+                </g>
+                <g id="Capa_1_184_"></g>
+              </g>
+            </svg>
+          </button>
+        </div>
+        <div class="overflow-auto">
+          <div
+            class="grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 mt-3 Drawer is-open"
+            id="us_regions_container"
+          ></div>
+        </div>
+      </div>
+
+      <!-- EU Regions -->
+      <div
+        class="p-2 bg-white shadow-lg rounded-lg hover:shadow-2xl transition-shadow ease-in-out"
+      >
+        <div
+          class="flex items-center justify-between border-b border-gray-300 pt-0 pb-2"
+        >
+          <div class="px-6 pl-3 flex items-center">
+            <img src="assets/icons/europe.png" class="w-6 mr-2" alt="" />
+            <span>Europe Regions</span>
+          </div>
+          <button
+            onclick="toggleContainer('eu_regions_container')"
+            type="button"
+            id="btn_eu_regions_container"
+            class="inline-block rotate-180 px-2 py-2 text-gray-400 font-medium text-xs leading-tight uppercase rounded-full hover:bg-gray-600 hover:bg-opacity-10 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+          >
+            <svg
+              version="1.1"
+              id="Capa_1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              class="w-4 h-4"
+              viewBox="0 0 25.93 25.93"
+              xml:space="preserve"
+            >
+              <g>
+                <g id="c118_triangle">
+                  <path
+                    d="M25.397,4.554h-2.042l-9.974,12.644c-0.101,0.124-0.256,0.197-0.416,0.197c-0.164,0-0.315-0.073-0.419-0.197L2.575,4.554
+			H0.532c-0.206,0-0.392,0.115-0.479,0.299c-0.09,0.184-0.064,0.403,0.06,0.561l12.435,15.762c0.104,0.125,0.255,0.2,0.419,0.2
+			c0.16,0,0.315-0.075,0.416-0.2L25.816,5.413c0.128-0.157,0.148-0.377,0.058-0.561C25.789,4.669,25.601,4.554,25.397,4.554z"
+                  />
+                </g>
+                <g id="Capa_1_184_"></g>
+              </g>
+            </svg>
+          </button>
+        </div>
+        <div class="overflow-auto">
+          <div
+            class="grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 mt-3 Drawer is-open"
+            id="eu_regions_container"
+          ></div>
+        </div>
+      </div>
+
+      <!-- APAC Regions  -->
+      <div
+        class="p-2 bg-white shadow-lg rounded-lg hover:shadow-2xl transition-shadow ease-in-out"
+      >
+        <div
+          class="flex items-center justify-between border-b border-gray-300 pt-0 pb-2"
+        >
+          <div class="px-6 pl-3 flex items-center">
+            <img src="assets/icons/apac.png" class="w-6 mr-2" alt="" />
+            <span>APAC Regions</span>
+          </div>
+          <button
+            onclick="toggleContainer('apac_regions_container')"
+            type="button"
+            id="btn_apac_regions_container"
+            class="inline-block rotate-180 px-2 py-2 text-gray-400 font-medium text-xs leading-tight uppercase rounded-full hover:bg-gray-600 hover:bg-opacity-10 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+          >
+            <svg
+              version="1.1"
+              id="Capa_1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              class="w-4 h-4"
+              viewBox="0 0 25.93 25.93"
+              xml:space="preserve"
+            >
+              <g>
+                <g id="c118_triangle">
+                  <path
+                    d="M25.397,4.554h-2.042l-9.974,12.644c-0.101,0.124-0.256,0.197-0.416,0.197c-0.164,0-0.315-0.073-0.419-0.197L2.575,4.554
+			H0.532c-0.206,0-0.392,0.115-0.479,0.299c-0.09,0.184-0.064,0.403,0.06,0.561l12.435,15.762c0.104,0.125,0.255,0.2,0.419,0.2
+			c0.16,0,0.315-0.075,0.416-0.2L25.816,5.413c0.128-0.157,0.148-0.377,0.058-0.561C25.789,4.669,25.601,4.554,25.397,4.554z"
+                  />
+                </g>
+                <g id="Capa_1_184_"></g>
+              </g>
+            </svg>
+          </button>
+        </div>
+        <div class="overflow-auto">
+          <div
+            class="grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 mt-3 Drawer is-open"
+            id="apac_regions_container"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Wasabi Console Endpoints  -->
+      <div
+        class="p-2 bg-white shadow-lg rounded-lg hover:shadow-2xl transition-shadow ease-in-out"
+      >
+        <div
+          class="flex items-center justify-between border-b border-gray-300 pt-0 pb-2"
+        >
+          <div class="px-6 pl-3 flex items-center">
+            <img src="assets/icons/settings.png" class="w-6 mr-2" alt="" />
+            <span>Wasabi Tools</span>
+          </div>
+          <button
+            onclick="toggleContainer('wasabi_tools_container')"
+            type="button"
+            id="btn_wasabi_tools_container"
+            class="inline-block rotate-180 px-2 py-2 text-gray-400 font-medium text-xs leading-tight uppercase rounded-full hover:bg-gray-600 hover:bg-opacity-10 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+          >
+            <svg
+              version="1.1"
+              id="Capa_1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              class="w-4 h-4"
+              viewBox="0 0 25.93 25.93"
+              xml:space="preserve"
+            >
+              <g>
+                <g id="c118_triangle">
+                  <path
+                    d="M25.397,4.554h-2.042l-9.974,12.644c-0.101,0.124-0.256,0.197-0.416,0.197c-0.164,0-0.315-0.073-0.419-0.197L2.575,4.554
+			H0.532c-0.206,0-0.392,0.115-0.479,0.299c-0.09,0.184-0.064,0.403,0.06,0.561l12.435,15.762c0.104,0.125,0.255,0.2,0.419,0.2
+			c0.16,0,0.315-0.075,0.416-0.2L25.816,5.413c0.128-0.157,0.148-0.377,0.058-0.561C25.789,4.669,25.601,4.554,25.397,4.554z"
+                  />
+                </g>
+                <g id="Capa_1_184_"></g>
+              </g>
+            </svg>
+          </button>
+        </div>
+        <div class="overflow-auto">
+          <div
+            class="grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 mt-3 Drawer is-open is-open"
+            id="wasabi_tools_container"
+          ></div>
+        </div>
+      </div>
+      <div class="p-2 flex justify-center">
+        <button
+          id="reload-btn"
+          onclick="loadAvailableRegions()"
+          type="button"
+          class="inline-block px-12 py-2 border-2 border-gray-800 text-gray-800 font-medium text-xs leading-tight uppercase rounded-full hover:bg-gray-600 hover:opacity-70 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+        >
+          Reload
+        </button>
+      </div>
+    </div>
+
+    <script src="./lib/utilities.js"></script>
+    <script src="./lib/components.js"></script>
+    <script src="./renderer.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/index.min.js"></script> -->
+  </body>
+</html>

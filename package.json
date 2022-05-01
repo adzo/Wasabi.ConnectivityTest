@@ -1,7 +1,7 @@
 {
-  "name": "electron-quick-start",
+  "name": "wasabi-connectivity-test",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "A cross platform desktop application that monitors and test connectivity to Wasabi endpoints, and validate certificates of the different endpoints",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -9,24 +9,16 @@
     "package-win": "electron-packager . wasabi-bucket-logs-viewer --overwrite --asar=true --platform=win32 --arch=ia32 --icon=icons/wasabi.ico --prune=true --out=release-builds/windows --version-string.CompanyName=Wasabi --version-string.FileDescription=CE --version-string.ProductName=\"Wasabi bucket Logs Viewer\"",
     "package-linux": "electron-packager . wasabi-bucket-logs-viewer --overwrite --asar=true --platform=linux --arch=x64 --icon=icons/wasabi.png --prune=true --out=release-builds/linux"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
-  "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
-  ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
+  "repository": "https://github.com/adzo/Wasabi.ConnectivityTest",
+  "keywords": [],
+  "author": "Adzo",
+  "license": "MIT",
   "devDependencies": {
     "electron": "^18.1.0",
-    "electron-packager": "^15.5.1"
+    "electron-packager": "^15.5.1",
+    "tailwindcss": "^3.0.24"
   },
   "dependencies": {
-    "convert-csv-to-json": "^1.3.3",
-    "get-ssl-certificate": "^2.3.3",
-    "mtr": "^0.2.1",
-    "ping": "^0.4.2"
+    "get-ssl-certificate": "^2.3.3"
   }
 }

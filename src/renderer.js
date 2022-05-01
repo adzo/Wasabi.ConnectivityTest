@@ -209,13 +209,6 @@ function show() {
     btn_us_region_collapse.classList.add('rotate-180')
 }
 
-const listener = () => {
-    // drawer.setAttribute('hidden', true);
-    drawer.classList.add('hidden');
-    // drawer.classList.add('is-open');
-
-    drawer.removeEventListener('transitionend', listener);
-};
 
 function hide() {
     drawer.addEventListener('transitionend', listener);
@@ -225,3 +218,56 @@ function hide() {
     us_region_is_open = false;
     btn_us_region_collapse.classList.remove('rotate-180')
 }
+
+containersVisibility = [];
+containersVisibility['us_regions_container'] = true;
+containersVisibility['eu_regions_container'] = true;
+containersVisibility['apac_regions_container'] = true;
+containersVisibility['wasabi_tools_container'] = true;
+
+function toggleContainer(containerId) {
+    if (containersVisibility[containerId]) {
+        hide(containerId);
+    } else {
+        show(containerId);
+    }
+    console.log(`End Status: ${containersVisibility[containerId]}`)
+
+}
+
+function show(containerId) {
+
+    containerDrawer = document.getElementById(containerId);
+    const reflow = containerDrawer.offsetHeight;
+
+    // Trigger our CSS transition
+    containerDrawer.classList.add('is-open');
+    containerDrawer.classList.remove('hidden');
+    containersVisibility[containerId] = true;
+
+    btn = document.getElementById(`btn_${containerId}`);
+    btn.classList.add('rotate-180')
+}
+
+
+const listener = (containerId) => {
+    containerDrawer = document.getElementById(containerId);
+    // drawer.setAttribute('hidden', true);
+    containerDrawer.classList.add('hidden');
+    // drawer.classList.add('is-open');
+
+    containerDrawer.removeEventListener('transitionend', listener);
+};
+
+function hide(containerId) {
+    containerDrawer = document.getElementById(containerId);
+    containerDrawer.addEventListener('transitionend', listener(containerId));
+
+    containerDrawer.classList.remove('is-open');
+
+    containersVisibility[containerId] = false;
+
+    btn = document.getElementById(`btn_${containerId}`);
+    btn.classList.remove('rotate-180');
+}
+

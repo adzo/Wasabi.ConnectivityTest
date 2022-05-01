@@ -112,8 +112,8 @@ function clearUi() {
     eu_regions_container.innerHTML = "";
     apac_regions_container.innerHTML = "";
     wasabi_tools_container.innerHTML = "";
-    main_content.classList.add('hidden');
-    loader_content.classList.remove('hidden');
+    // main_content.classList.add('hidden');
+    // loader_content.classList.remove('hidden');
 }
 
 function addRegionToCorrespondingUiBlock(region) {
