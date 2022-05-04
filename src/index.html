@@ -13,7 +13,7 @@
     />
   </head>
 
-  <body class="bg-gray-300 p-4">
+  <body class="bg-gray-100 p-2">
     <div id="loader">
       <div class="h-full flex flex-col justify-center items-center">
         <div class="flex justify-center items-center">
@@ -83,7 +83,7 @@
         </div>
         <div class="overflow-auto">
           <div
-            class="grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 mt-3 Drawer is-open"
+            class="grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 mt-3 Drawer is-open"
             id="us_regions_container"
           ></div>
         </div>
@@ -130,7 +130,7 @@
         </div>
         <div class="overflow-auto">
           <div
-            class="grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 mt-3 Drawer is-open"
+            class="grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 mt-3 Drawer is-open"
             id="eu_regions_container"
           ></div>
         </div>
@@ -177,7 +177,7 @@
         </div>
         <div class="overflow-auto">
           <div
-            class="grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 mt-3 Drawer is-open"
+            class="grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 mt-3 Drawer is-open"
             id="apac_regions_container"
           ></div>
         </div>
@@ -224,7 +224,7 @@
         </div>
         <div class="overflow-auto">
           <div
-            class="grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 mt-3 Drawer is-open is-open"
+            class="grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 mt-3 Drawer is-open is-open"
             id="wasabi_tools_container"
           ></div>
         </div>
@@ -232,12 +232,25 @@
       <div class="p-2 flex justify-center">
         <button
           id="reload-btn"
-          onclick="loadAvailableRegions()"
+          onclick="manualReload()"
           type="button"
           class="inline-block px-12 py-2 border-2 border-gray-800 text-gray-800 font-medium text-xs leading-tight uppercase rounded-full hover:bg-gray-600 hover:opacity-70 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
         >
           Reload
         </button>
+      </div>
+
+      <div class="flex justify-center items-center">
+        <input
+          type="checkbox"
+          id="autoRefresh"
+          checked
+          name="autoRefresh"
+          class="mr-2"
+        />
+        <label for="autoRefresh" id="refreshMessage"
+          >Automatically refresh data in 60 seconds!</label
+        >
       </div>
     </div>
 

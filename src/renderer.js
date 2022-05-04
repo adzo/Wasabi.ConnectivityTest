@@ -21,6 +21,11 @@ const us_regions_prefix = ['us', 'ca'];
 const eu_regions_prefix = ['eu', 'eu'];
 const apac_regions_prefix = ['ap'];
 
+certLoading = false;
+pingLoading = false;
+numberOfLoadedCertificates = 0;
+numberOfLoadedPings = 0;
+
 // UI Event creation
 reload_btn.addEventListener('click', () => {
     loadAvailableRegions();
@@ -38,7 +43,10 @@ window.api.receive("pingMeasured", (data) => {
     } else {
         setAvailablilityBadge(data.region, false, 'N/A')
     }
-
+    numberOfLoadedPings += 1;
+    if (numberOfLoadedPings == loadedRegions.length + 3) {
+        pingLoading = false;
+    }
 })
 
 window.api.receive("getRegionCert", (data) => {
@@ -55,25 +63,16 @@ window.api.receive("getRegionCert", (data) => {
     } else {
         setCertificateValidation(region, false);
     }
+
+    numberOfLoadedCertificates += 1;
+    if (numberOfLoadedCertificates == loadedRegions.length + 3) {
+        certLoading = false;
+    }
 })
 //endregion
 
 //Events Raising
 function notifyMainProcess() {
-    // loadedRegions.push({
-    //     Region: 'ap-BAD-1',
-    //     RegionName: 'expired.badssl',
-    //     Endpoint: 'expired.badssl.com',
-    //     Status: 'OK',
-    //     IsDefault: true
-    // });
-    // loadedRegions.push({
-    //     Region: 'ap-BAD-2',
-    //     RegionName: 'pinning-test',
-    //     Endpoint: 'pinning-test.badssl.com',
-    //     Status: 'OK',
-    //     IsDefault: true
-    // });
 
     window.api.send("onRegionsLoaded", loadedRegions)
 }
@@ -130,6 +129,13 @@ function addWasabiToolsEndpoints() {
 }
 
 function loadAvailableRegions() {
+    if (certLoading || pingLoading) {
+        console.log('old data still loading!')
+        return;
+    }
+
+    numberOfLoadedCertificates = 0;
+    numberOfLoadedPings = 0;
     clearUi();
     url = 'https://s3.wasabisys.com/?describeRegions';
 
@@ -178,46 +184,8 @@ function loadAvailableRegions() {
     });
 }
 
-
-
 loadAvailableRegions()
 
-const drawer = document.querySelector('.Drawer');
-const btn_us_region_collapse = document.querySelector('#btn_us_region_collapse');
-us_region_is_open = false;
-
-function toggleUsRegion() {
-    if (us_region_is_open) {
-        hide();
-    } else {
-        show();
-    }
-}
-
-function show() {
-    drawer.classList.remove('hidden');
-
-    /**
-    * Force a browser re-paint so the browser will realize the
-    * element is no longer `hidden` and allow transitions.
-    */
-    const reflow = drawer.offsetHeight;
-
-    // Trigger our CSS transition
-    drawer.classList.add('is-open');
-    us_region_is_open = true;
-    btn_us_region_collapse.classList.add('rotate-180')
-}
-
-
-function hide() {
-    drawer.addEventListener('transitionend', listener);
-
-    drawer.classList.remove('is-open');
-
-    us_region_is_open = false;
-    btn_us_region_collapse.classList.remove('rotate-180')
-}
 
 containersVisibility = [];
 containersVisibility['us_regions_container'] = true;
@@ -231,8 +199,6 @@ function toggleContainer(containerId) {
     } else {
         show(containerId);
     }
-    console.log(`End Status: ${containersVisibility[containerId]}`)
-
 }
 
 function show(containerId) {
@@ -248,7 +214,6 @@ function show(containerId) {
     btn = document.getElementById(`btn_${containerId}`);
     btn.classList.add('rotate-180')
 }
-
 
 const listener = (containerId) => {
     containerDrawer = document.getElementById(containerId);
@@ -270,4 +235,62 @@ function hide(containerId) {
     btn = document.getElementById(`btn_${containerId}`);
     btn.classList.remove('rotate-180');
 }
+
+let autoReload = true;
+const autoReloadCheckBox = document.getElementById('autoRefresh');
+var refreshInterval;
+autoReloadCheckBox.addEventListener('change', e => {
+    autoReload = e.target.checked;
+    if (autoReload) {
+        countdown = 60;
+        setAutomaticRefreshInterval();
+    } else {
+        const secondsSpan = document.getElementById('refreshMessage')
+        secondsSpan.textContent = "Automatic refresh is disabled"
+        if (refreshInterval) clearInterval(refreshInterval);
+    }
+})
+
+function setAutomaticRefreshInterval() {
+    refreshInterval = setInterval(() => {
+        currentDate = new Date();
+        passedSecond = Math.floor((currentDate - startingDate) / 1000);
+
+        if (oldSecond !== passedSecond) {
+            oldSecond = passedSecond
+
+            decreaseSecondsCountdown()
+            if (countdown == 0) {
+                loadAvailableRegions();
+            }
+        }
+    }, 250)
+}
+
+// autoRefresh.checked = true;
+
+
+startingDate = new Date();
+oldSecond = 0;
+
+
+
+countdown = 60;
+function decreaseSecondsCountdown() {
+    const secondsSpan = document.getElementById('refreshMessage')
+
+    if (countdown == 0) {
+        countdown = 60;
+    }
+
+    countdown -= 1;
+    secondsSpan.textContent = `Automatically refresh data in ${countdown} seconds`;
+}
+
+function manualReload() {
+    countdown = 60;
+    loadAvailableRegions();
+}
+
+setAutomaticRefreshInterval();
 
