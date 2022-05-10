@@ -5,9 +5,9 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=icons/wasabi.icns --prune=true --out=release-builds/mac",
-    "package-win": "electron-packager . wasabi-bucket-logs-viewer --overwrite --asar=true --platform=win32 --arch=ia32 --icon=icons/wasabi.ico --prune=true --out=release-builds/windows --version-string.CompanyName=Wasabi --version-string.FileDescription=CE --version-string.ProductName=\"Wasabi bucket Logs Viewer\"",
-    "package-linux": "electron-packager . wasabi-bucket-logs-viewer --overwrite --asar=true --platform=linux --arch=x64 --icon=icons/wasabi.png --prune=true --out=release-builds/linux"
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=src/assets/icons/wasabi.icns --prune=true --out=../release-builds/Connectivity-tester/mac",
+    "package-win": "electron-packager . wasabi-Connectivity-tester --overwrite --asar=true --platform=win32 --arch=ia32 --icon=src/assets/icons/wasabi.ico --prune=true --out=../release-builds/Connectivity-tester/windows --version-string.CompanyName=Wasabi --version-string.FileDescription=CE --version-string.ProductName=\"Wasabi connectivity tester\"",
+    "package-linux": "electron-packager . wasabi-Connectivity-tester --overwrite --asar=true --platform=linux --arch=x64 --icon=src/assets/icons/wasabi.png --prune=true --out=../release-builds/Connectivity-tester/linux"
   },
   "repository": "https://github.com/adzo/Wasabi.ConnectivityTest",
   "keywords": [],

@@ -18,10 +18,8 @@ function createWindow() {
       devTools: !app.isPackaged
     },
     autoHideMenuBar: true,
-    icon: __dirname + '/src/assets/icons/wasabi.png',
-
+    icon: __dirname + '/src/assets/icons/wasabi.png'
   })
-
 
   // and load the index.html of the app.
   mainWindow.loadFile('./src/index.html')
@@ -96,8 +94,6 @@ function buildGetRegionCertificateEventHandler() {
     });
   })
 }
-
-
 
 async function pingRegion(url) {
 
