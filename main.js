@@ -137,7 +137,7 @@ const mainMenuTemplate = [
 // if mac, add empty object to menu
 if (process.platform == 'darwin') {
   mainMenuTemplate.unshift({
-    lebel: 'Wasabi - Connectivity Test'
+    label: 'Wasabi - Connectivity Test'
   });
 }
 
