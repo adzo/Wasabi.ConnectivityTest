@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A cross platform desktop application that monitors and test connectivity to Wasabi endpoints, and validate certificates of the different endpoints",
   "main": "main.js",
+  "productName": "Wasabi - Connectivity Test",
   "scripts": {
     "start": "electron .",
     "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=src/assets/icons/wasabi.icns --prune=true --out=../release-builds/Connectivity-tester/mac",
