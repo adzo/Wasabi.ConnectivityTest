@@ -1,4 +1,4 @@
-# electron-quick-start
+# Wasabi Connectivity Test
 
 **Clone and run for a quick way to see Electron in action.**
 
@@ -20,7 +20,7 @@ To clone and run this repository you'll need [Git](https://git-scm.com) and [Nod
 # Clone this repository
 git clone https://github.com/electron/electron-quick-start
 # Go into the repository
-cd electron-quick-start
+cd Wasabi.ConnectivityTest
 # Install dependencies
 npm install
 # Run the app
