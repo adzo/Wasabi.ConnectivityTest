@@ -24,7 +24,7 @@ function createWindow() {
   mainWindow.loadFile('./src/index.html')
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
@@ -70,18 +70,20 @@ function buildGetRegionCertificateEventHandler() {
 
     // lunching ping call
     pingRegion(selectedRegion.Endpoint).then(result => {
-      //console.log(result);
+      console.log(result);
       if (result) {
         mainWindow.webContents.send("pingMeasured", {
           region: regionCode,
           resolved: true,
-          ping: result
+          ping: result,
+          platform: process.platform
         });
       } else {
         mainWindow.webContents.send("pingMeasured", {
           region: regionCode,
           resolved: false,
-          ping: result
+          ping: result,
+          platform: process.platform
         });
       }
 
@@ -95,13 +97,16 @@ function buildGetRegionCertificateEventHandler() {
       });
     });
   })
-}
+} 
 
 async function pingRegion(url) {
 
+
   // let result = await pingDefault(url);
-  return exec(`ping ${url}`).then(result =>
-    result)
+  return exec(`ping ${url} -c 5`).then(result =>{
+    console.log(result)
+    return result
+  })
     .catch(err => {
       console.log(err)
       return false;

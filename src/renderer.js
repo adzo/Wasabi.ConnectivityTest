@@ -38,7 +38,7 @@ window.api.receive("pingMeasured", (data) => {
     //console.log("Ping measure")
     //console.log(data);
     if (data.resolved && data.ping.stdout) {
-        ping = parsePingResponse(data.ping);
+        ping = parsePingResponse(data.ping, data.platform);
         setAvailablilityBadge(data.region, true, ping)
     } else {
         setAvailablilityBadge(data.region, false, 'N/A')
