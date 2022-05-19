@@ -40,7 +40,7 @@ app.whenReady().then(() => {
   })
 
   const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
-  //Menu.setApplicationMenu(mainMenu);
+  Menu.setApplicationMenu(mainMenu);
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
