@@ -24,7 +24,7 @@ function createWindow() {
   mainWindow.loadFile('./src/index.html')
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
@@ -97,13 +97,15 @@ function buildGetRegionCertificateEventHandler() {
       });
     });
   })
-} 
+}
 
 async function pingRegion(url) {
 
 
   // let result = await pingDefault(url);
-  return exec(`ping ${url} -c 5`).then(result =>{
+  let command = process.platform == 'darwin' ? `ping ${url} -c 5` : `ping ${url}`;
+
+  return exec(command).then(result => {
     console.log(result)
     return result
   })
