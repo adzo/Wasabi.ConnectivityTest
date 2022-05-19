@@ -130,8 +130,8 @@ function addRegionToCorrespondingUiBlock(region) {
     targetUiContainer.innerHTML += getRegionComponent(region);
 
     // container = document.querySelector(`#region-component-${region.Region}`);
-    // console.log(container);
+    // //console.log(container);
     // container.onclick = () => {
-    //     console.log('Clicked on ' + region.Region + ' component');
+    //     //console.log('Clicked on ' + region.Region + ' component');
     // }
 }

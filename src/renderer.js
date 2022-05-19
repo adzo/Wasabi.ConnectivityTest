@@ -35,8 +35,8 @@ reload_btn.addEventListener('click', () => {
 //region Events Handling
 window.api.receive("pingMeasured", (data) => {
     //TODO
-    //console.log("Ping measure")
-    //console.log(data);
+    ////console.log("Ping measure")
+    ////console.log(data);
     if (data.resolved && data.ping.stdout) {
         ping = parsePingResponse(data.ping, data.platform);
         setAvailablilityBadge(data.region, true, ping)
@@ -130,7 +130,7 @@ function addWasabiToolsEndpoints() {
 
 function loadAvailableRegions() {
     if (certLoading || pingLoading) {
-        console.log('old data still loading!')
+        //console.log('old data still loading!')
         return;
     }
 

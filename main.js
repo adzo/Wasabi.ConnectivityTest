@@ -24,7 +24,7 @@ function createWindow() {
   mainWindow.loadFile('./src/index.html')
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
@@ -40,7 +40,7 @@ app.whenReady().then(() => {
   })
 
   const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
-  Menu.setApplicationMenu(mainMenu);
+  //Menu.setApplicationMenu(mainMenu);
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -70,7 +70,7 @@ function buildGetRegionCertificateEventHandler() {
 
     // lunching ping call
     pingRegion(selectedRegion.Endpoint).then(result => {
-      console.log(result);
+      //console.log(result);
       if (result) {
         mainWindow.webContents.send("pingMeasured", {
           region: regionCode,
@@ -106,11 +106,11 @@ async function pingRegion(url) {
   let command = process.platform == 'darwin' ? `ping ${url} -c 5` : `ping ${url}`;
 
   return exec(command).then(result => {
-    console.log(result)
+    //console.log(result)
     return result
   })
     .catch(err => {
-      console.log(err)
+      //console.log(err)
       return false;
     })
 
