@@ -141,7 +141,7 @@ function loadAvailableRegions() {
 
     reload_btn.classList.add('hidden');
     error_text.textContent = '';
-    loader_spinner.classList.add("spinner-grow")
+    //loader_spinner.classList.add("spinner-grow")
 
     $.ajax({
         type: "GET",
