@@ -1,16 +1,24 @@
-.Drawer {
-    transform: translateY(-100%);
-    transition: transform ease-out 0.2s;
-  }
-  
-  .Drawer.is-open {
-    transform: translateX(0);
-  }
+
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@layer components{
+  .pulse-loader{
+    @apply h-2 w-full bg-slate-400 dark:bg-slate-300 rounded animate-pulse;
+  }
+}
+
 html{
   font-size: 12px;
+}
+
+.Drawer {
+  transform: translateY(-100%);
+  transition: transform ease-out 0.2s;
+}
+
+.Drawer.is-open {
+  transform: translateX(0);
 }

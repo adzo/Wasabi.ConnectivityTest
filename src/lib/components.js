@@ -1,5 +1,5 @@
 function getRegionComponent(regionTestResult) {
-    return `<div id="region-component-${regionTestResult.Region}" class="p-3 px-6 border border-gray-200 rounded-lg shadow hover:shadow-2xl transition-shadow ease-in-out"> \
+    return `<div id="region-component-${regionTestResult.Region}" class="p-3 px-6 border border-gray-200  dark:border-gray-500 dark:bg-gray-600 rounded-lg shadow hover:shadow-2xl transition-shadow ease-in-out"> \
                 <div \
                 class="border-b border-gray-200 py-2 font-bold flex items-center justify-between" \
                 > \
@@ -14,35 +14,35 @@ function getRegionComponent(regionTestResult) {
                 <div class="flex items-center justify-between"> \
                     <span>Endpoint: </span> \
                     <span \
-                    class="bg-gray-100 text-gray-800 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300" \
+                    class="bg-gray-100 text-gray-800 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:border-gray-500 dark:text-gray-300" \
                     >${regionTestResult.Endpoint}</span \
                     > \
                 </div> \
                 </div> \
                 <!--Certificate info--> \
-                <div class="grid grid-cols-1 gap-1 mt-1 border-t border-gray-200 pt-2"> \
+                <div class="grid grid-cols-1 gap-1 mt-1 border-t border-gray-200 dark:border-gray-500 pt-2"> \
                 <div class="flex items-center justify-between"> \ 
                     <div class="mr-6">Certificate:</div> \
                     <div id="certValid_${regionTestResult.Region}" class="w-full flex justify-end">\
-                        <div class="h-2 w-full bg-slate-400 rounded animate-pulse"></div> \
+                        <div class="pulse-loader"></div> \
                     </div>\
                 </div> \
                 <div class="flex items-center justify-between"> \ 
                     <div class="mr-6">Issuer:</div> \
                     <div id="issuer_${regionTestResult.Region}" class="w-full flex justify-end">\
-                        <div class="h-2 w-full bg-slate-400 rounded animate-pulse"></div> \
+                        <div class="pulse-loader"></div> \
                     </div>\
                 </div> \
                 <div class="flex items-center justify-between"> \ 
                     <div class="mr-6">From:</div> \
                     <div id="validFrom_${regionTestResult.Region}" class="w-full flex justify-end">\
-                        <div class="h-2 w-full bg-slate-400 rounded animate-pulse"></div> \
+                        <div class="pulse-loader"></div> \
                     </div>\
                 </div> \
                 <div class="flex items-center justify-between"> \ 
                 <div class="mr-6">To:</div> \
                 <div id="validTo_${regionTestResult.Region}" class="w-full flex justify-end">\
-                    <div class="h-2 w-full bg-slate-400 rounded animate-pulse"></div> \
+                    <div class="pulse-loader"></div> \
                 </div>\
             </div> \
                 </div> \
