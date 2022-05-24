@@ -167,12 +167,6 @@ const mainMenuTemplate = [
     label: 'File',
     submenu: [
       {
-        label: 'Settings',
-        click() {
-          createSettingsWindow()
-        }
-      },
-      {
         label: 'Quit',
         accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
         click() {
