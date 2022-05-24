@@ -22,13 +22,13 @@ contextBridge.exposeInMainWorld(
   "api", {
   send: (channel, data) => {
     // whitelist channels
-    let validChannels = ["onRegionsLoaded", "getRegionCert"];
+    let validChannels = ["onRegionsLoaded", "getRegionCert", "settingsChanged", "renderer-ready"];
     if (validChannels.includes(channel)) {
       ipcRenderer.send(channel, data);
     }
   },
   receive: (channel, func) => {
-    let validChannels = ["getRegionCert", "pingMeasured"];
+    let validChannels = ["getRegionCert", "pingMeasured", "settingsChanged", "renderer-ready"];
     if (validChannels.includes(channel)) {
       // Deliberately strip event as it includes `sender` 
       ipcRenderer.on(channel, (event, ...args) => func(...args));

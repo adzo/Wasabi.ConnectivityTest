@@ -242,7 +242,7 @@ var refreshInterval;
 autoReloadCheckBox.addEventListener('change', e => {
     autoReload = e.target.checked;
     if (autoReload) {
-        countdown = 60;
+        countdown = targetCountdown;
         setAutomaticRefreshInterval();
     } else {
         const secondsSpan = document.getElementById('refreshMessage')
@@ -276,21 +276,61 @@ oldSecond = 0;
 
 
 countdown = 60;
+targetCountdown = 60;
+const zeroPad = (num, places) => String(num).padStart(places, '0')
 function decreaseSecondsCountdown() {
     const secondsSpan = document.getElementById('refreshMessage')
 
     if (countdown == 0) {
-        countdown = 60;
+        countdown = targetCountdown;
     }
 
     countdown -= 1;
-    secondsSpan.textContent = `Automatically refresh data in ${countdown} seconds`;
+    let totalSeconds = countdown;
+    let hours = Math.floor(Math.floor(totalSeconds / 60) / 60);
+    let minutes = Math.floor(totalSeconds / 60) % 60;
+    let seconds = totalSeconds % 60;
+
+    secondsSpan.textContent = `Auto Refresh:  ${zeroPad(hours, 2)}:${zeroPad(minutes, 2)}:${zeroPad(seconds, 2)}`;
 }
 
 function manualReload() {
-    countdown = 60;
+    countdown = targetCountdown;
     loadAvailableRegions();
 }
 
 setAutomaticRefreshInterval();
+
+// Modal handler:
+let modal = document.getElementById("my-modal");
+let settingsButton = document.getElementById("open-btn");
+let saveSettingsButton = document.getElementById("ok-btn");
+let modalWrapper = document.getElementById("modal-wrapper");
+const refreshTimeSelector = document.getElementById(
+    "refresh-time-selector"
+);
+
+settingsButton.onclick = function () {
+    modal.style.display = "block";
+}
+// We want the modal to close when the OK button is clicked
+saveSettingsButton.onclick = function () {
+    modal.style.display = "none";
+    window.api.send("settingsChanged", refreshTimeSelector.value);
+}
+
+window.onclick = function (event) {
+    if (event.target == modalWrapper) {
+        //console.log('clicked outside');
+        modal.style.display = "none";
+    }
+}
+
+window.api.receive("settingsChanged", (data) => {
+    //console.log(`Got notified from main process: ${data}`);
+    targetCountdown = data * 60;
+    countdown = data * 60;
+})
+
+window.api.send("renderer-ready");
 

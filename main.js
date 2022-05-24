@@ -4,8 +4,12 @@ const path = require('path');
 const sslCertificate = require('get-ssl-certificate');
 const util = require('util')
 const exec = util.promisify(require('child_process').exec);
+const Store = require('electron-store');
+
+const store = new Store();
 
 let mainWindow;
+let settingsWindows;
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -24,7 +28,7 @@ function createWindow() {
   mainWindow.loadFile('./src/index.html')
 
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
@@ -40,7 +44,7 @@ app.whenReady().then(() => {
   })
 
   const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
-  //Menu.setApplicationMenu(mainMenu);
+  Menu.setApplicationMenu(mainMenu);
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -49,6 +53,30 @@ app.whenReady().then(() => {
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
+
+// Handle settings window:
+function createSettingsWindow() {
+  settingsWindows = new BrowserWindow({
+    width: 500,
+    height: 205,
+    // minHeight: 205,
+    // maxHeight: 205,
+    // minWidth: 500,
+    // maxWidth: 500,
+    // resizable: false,
+    title: 'Settings',
+    parent: mainWindow,
+    modal: true
+  });
+
+  settingsWindows.loadFile('./src/settings.html')
+
+  settingsWindows.on('close', function () {
+    settingsWindows = null;
+  })
+
+  settingsWindows.webContents.openDevTools();
+}
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
@@ -60,6 +88,20 @@ function buildRegionsLoadedEventHandler() {
   ipcMain.on("onRegionsLoaded", (event, args) => {
     currentRegions = args;
   })
+}
+
+function saveRefreshTime(refreshTime) {
+  store.set('refresh-time', refreshTime);
+}
+
+function buildSettingsChangedEventHandler() {
+  ipcMain.on("settingsChanged", (event, args) => {
+    settingsValue = args;
+    saveRefreshTime(settingsValue);
+    notifyRefreshTimeChange(settingsValue);
+  });
+
+  ipcMain.on("renderer-ready", loadDefaultConfig);
 }
 
 function buildGetRegionCertificateEventHandler() {
@@ -100,27 +142,21 @@ function buildGetRegionCertificateEventHandler() {
 }
 
 async function pingRegion(url) {
-
-
   // let result = await pingDefault(url);
-  let command = process.platform == 'darwin' ? `ping ${url} -c 5` : `ping ${url}`;
+  let command = process.platform == 'darwin' || process.platform == 'linux' ? `ping ${url} -c 5` : `ping ${url}`;
 
   return exec(command).then(result => {
-    //console.log(result)
     return result
   })
     .catch(err => {
-      //console.log(err)
       return false;
     })
-
-  // let result = await exec(`ping ${url}`);
-  // return result;
 }
 
 async function buildEventsHandlers() {
   buildRegionsLoadedEventHandler();
   buildGetRegionCertificateEventHandler();
+  buildSettingsChangedEventHandler();
 }
 
 buildEventsHandlers();
@@ -130,6 +166,12 @@ const mainMenuTemplate = [
   {
     label: 'File',
     submenu: [
+      {
+        label: 'Settings',
+        click() {
+          createSettingsWindow()
+        }
+      },
       {
         label: 'Quit',
         accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
@@ -147,6 +189,23 @@ if (process.platform == 'darwin') {
     label: 'Wasabi - Connectivity Test'
   });
 }
+
+function loadDefaultConfig() {
+  let refreshTime = store.get('refresh-time');
+
+  if (!refreshTime) {
+    refreshTime = 60;
+    saveRefreshTime(refreshTime)
+  }
+
+  notifyRefreshTimeChange(refreshTime);
+}
+
+function notifyRefreshTimeChange(time) {
+  mainWindow.webContents.send("settingsChanged", time);
+}
+
+
 
 
 
