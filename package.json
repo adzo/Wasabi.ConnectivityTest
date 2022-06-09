@@ -15,7 +15,7 @@
   "author": "Adzo",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^18.2.3",
+    "electron": "^19.0.4",
     "electron-packager": "^15.5.1",
     "tailwindcss": "^3.0.24"
   },
