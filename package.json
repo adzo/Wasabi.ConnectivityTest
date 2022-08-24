@@ -16,7 +16,7 @@
   "license": "MIT",
   "devDependencies": {
     "electron": "^19.0.4",
-    "electron-packager": "^15.5.1",
+    "electron-packager": "^16.0.0",
     "tailwindcss": "^3.1.2"
   },
   "dependencies": {
