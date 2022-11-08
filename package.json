@@ -17,7 +17,7 @@
   "devDependencies": {
     "electron": "^19.0.4",
     "electron-packager": "^15.5.1",
-    "tailwindcss": "^3.1.2"
+    "tailwindcss": "^3.2.2"
   },
   "dependencies": {
     "electron-store": "^8.0.2",
